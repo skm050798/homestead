@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#174d40">
+  <title>Homestead | Construction Budget</title>
+  <style>
+    :root{font-family:Inter,"Segoe UI",sans-serif;color:#203e35;background:#f7f8f4;font-synthesis:none;--green:#174d40;--muted:#758079;--border:#e4e9e1}
+    *{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #bc892e;outline-offset:4px}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.shell{max-width:1280px;margin:auto;padding:0 56px}
+    header{border-bottom:1px solid var(--border);background:#fff}header .shell{height:88px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:650;letter-spacing:-.8px}.brand-icon{background:var(--green);color:white;display:grid;place-items:center;width:40px;height:40px;border-radius:12px}.brand-icon svg{width:25px;height:25px}.header-tag{font-size:12px;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase}.avatar{height:36px;width:36px;border-radius:50%;background:#eaf0e5;display:grid;place-items:center;font-size:13px;font-weight:600}.header-right{display:flex;gap:24px;align-items:center}
+    main{padding-top:45px;padding-bottom:30px}.breadcrumb{font-size:12px;display:flex;gap:10px;align-items:center;color:var(--muted);margin-bottom:26px}.breadcrumb svg{width:15px;height:15px}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:32px}.eyebrow{font-size:11px;font-weight:650;letter-spacing:2px;color:#7a866f;text-transform:uppercase;margin:0 0 12px}h1{font-size:38px;letter-spacing:-1.5px;line-height:1.15;font-weight:600;margin:0 0 12px}.subtitle{font-size:14px;color:var(--muted);line-height:1.6;margin:0}.button{border:1px solid var(--border);border-radius:8px;padding:12px 17px;background:white;color:var(--green);font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}.button svg{width:17px;height:17px}.button:hover{background:#edf1e9}.button.primary{background:var(--green);color:#fff;border-color:var(--green)}.button.primary:hover{background:#23624f}
+    .project{padding:21px 24px;border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;align-items:center;gap:16px;margin-bottom:24px}.project-icon{height:46px;width:46px;display:grid;place-items:center;background:#f1f3eb;border-radius:10px;color:#738261}.project h2{font-size:15px;margin:0 0 6px;font-weight:600}.project p{font-size:12px;color:var(--muted);margin:0}.pill{margin-left:auto;background:#edf3e8;border:1px solid #dfe9d6;padding:7px 10px;border-radius:20px;font-size:11px;color:#577249;display:flex;align-items:center;gap:6px}.dot{width:6px;height:6px;border-radius:50%;background:#7c9b5b}
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card{padding:25px;border:1px solid var(--border);border-radius:12px;background:#fff;min-height:204px}.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.card h2{font-size:13px;font-weight:500;margin:0;color:#6b786f}.card-icon{width:35px;height:35px;border-radius:9px;background:#f2f4ee;display:grid;place-items:center;color:#718461}.card-icon svg{width:19px;height:19px}.amount{font-size:clamp(25px,2.7vw,36px);font-weight:600;letter-spacing:-1.2px;margin:23px 0 11px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.card p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.card.paid .amount{color:#3e7956}.card.remaining{background:var(--green);border-color:var(--green);color:white;position:relative;overflow:hidden}.card.remaining:after{content:"";position:absolute;width:170px;height:170px;border:1px solid #ffffff0d;right:-60px;bottom:-80px;border-radius:50%;pointer-events:none}.card.remaining h2,.card.remaining p{color:#c0d3c7}.card.remaining .card-icon{background:#ffffff12;color:#d5e0d1}
+    .progress-panel{background:white;border:1px solid var(--border);border-radius:12px;padding:27px 28px;margin-top:24px}.section-title{font-size:15px;font-weight:600;margin:0 0 7px}.progress-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.progress-heading p{color:var(--muted);font-size:12px;margin:0;line-height:1.5}.percentage{font-size:25px;letter-spacing:-.6px;font-weight:600}.percentage small{color:var(--muted);font-size:12px;font-weight:400;letter-spacing:0}.track{height:12px;background:#eef1e8;border-radius:20px;margin-top:26px;overflow:hidden}.fill{height:100%;width:0;background:#85a172;border-radius:20px;transition:width .3s}.legend{display:flex;justify-content:space-between;margin-top:13px;gap:16px;font-size:11px;color:var(--muted)}.legend span{display:flex;align-items:center;gap:7px}.swatch{height:7px;width:7px;background:#85a172;border-radius:2px;flex-shrink:0}.swatch.light{background:#e8ecdf}.insight{margin-top:24px;padding-top:20px;border-top:1px solid #f0f2eb;display:flex;gap:10px;align-items:center;font-size:12px;line-height:1.6;color:#677462}.insight svg{width:17px;height:17px;flex-shrink:0}
+    .bottom{display:grid;grid-template-columns:1.35fr 1fr;gap:24px;margin-top:24px}.note{border:1px solid var(--border);border-radius:12px;padding:24px;display:flex;gap:16px;align-items:center;background:#f0f3e9}.note svg{width:32px;height:32px;flex-shrink:0;color:#788960}.note h2{font-size:14px;margin:0 0 7px;font-weight:600}.note p{font-size:12px;line-height:1.7;color:#78816f;margin:0}.quick-edit{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:14px}.quick-edit p{font-size:12px;line-height:1.6;color:var(--muted);margin:6px 0 0}.quick-edit .button{padding:10px 12px}.footer{display:flex;justify-content:space-between;gap:15px;font-size:11px;color:#899184;margin:28px 0 8px;line-height:1.6}.footer span:first-child{display:flex;align-items:center;gap:6px}.footer svg{width:13px;height:13px}
+    .notice{font-size:13px;padding:13px 16px;border:1px solid #e6ca8b;background:#fff6e3;border-radius:8px;color:#775215;margin-bottom:20px;line-height:1.5}.notice[hidden]{display:none}
+    dialog{border:1px solid var(--border);border-radius:16px;padding:30px;width:min(440px,calc(100% - 32px));color:#203e35;box-shadow:0 24px 80px #173a3429}dialog::backdrop{background:#173a3466}dialog h2{font-size:23px;margin:0 0 10px;letter-spacing:-.5px}dialog p{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 22px}label{display:block;font-size:13px;font-weight:600;margin:17px 0 8px}input{width:100%;border:1px solid #cdd7c9;border-radius:7px;padding:12px;color:#203e35;background:white}input:focus{outline:2px solid #85a172;outline-offset:2px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.error{color:#ac382c;font-size:12px;margin-top:10px;line-height:1.5}
+    .intro-actions{display:flex;gap:12px;flex-wrap:wrap}
+    main.shell{padding-top:45px;padding-bottom:30px}.percentage small{display:block;text-align:right;margin-top:4px}
+    @media(min-width:1500px){main.shell{padding-top:65px}.cards .card{min-height:225px}.amount{margin-top:30px}.bottom{margin-top:28px}}
+    @media(max-width:800px){.shell{padding-left:24px;padding-right:24px}.cards{gap:12px}.card{padding:18px}.bottom{grid-template-columns:1fr}.header-tag{display:none}.amount{font-size:26px}.intro{align-items:flex-start}h1{font-size:32px}}
+    @media(max-width:580px){header .shell{height:72px}main.shell{padding-top:26px}.shell{padding-left:20px;padding-right:20px}.brand{font-size:21px}.intro{flex-direction:column;gap:20px;margin-bottom:24px}.intro>.button{width:100%}h1{font-size:32px}.cards{grid-template-columns:1fr;gap:12px}.card{min-height:unset;padding:21px 23px}.amount{font-size:32px;margin:13px 0 8px}.project{padding:17px;gap:12px}.project p{font-size:11px}.pill{padding:6px 8px;font-size:10px}.progress-panel{padding:23px}.percentage{font-size:23px}.percentage small{display:block;text-align:right;font-size:10px;margin-top:4px}.footer{flex-direction:column;gap:4px}.legend{font-size:10px}.quick-edit{padding:21px}.note{padding:21px}.breadcrumb{margin-bottom:23px}}
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></symbol>
+    <symbol id="wallet" viewBox="0 0 24 24"><path d="M20 8V5H5a2 2 0 0 1 0-4h13v4M3 3v16a2 2 0 0 0 2 2h15V8H5a2 2 0 0 1-2-2"/><path d="M20 12h-5v5h5"/><path d="M17 14.5h.01"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="edit" viewBox="0 0 24 24"><path d="m14 5 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14z"/></symbol>
+    <symbol id="leaf" viewBox="0 0 24 24"><path d="M20 3C8 2 2 8 5 15s16 5 15-12ZM4 21l11-12"/></symbol>
+    <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3"/></symbol>
+  </svg>
+  <header><div class="shell">
+    <div class="brand"><span class="brand-icon"><svg aria-hidden="true"><use href="#home"/></svg></span>homestead<span style="color:#8aa273">.</span></div>
+    <div class="header-right"><span class="header-tag">A little closer to home</span><span class="avatar" aria-label="My home">H</span></div>
+  </div></header>
+  <main class="shell">
+    <div class="breadcrumb"><svg aria-hidden="true"><use href="#home"/></svg><span>My home</span><span aria-hidden="true">/</span><span style="color:#344e3e">Overview</span></div>
+    <div class="intro">
+      <div><p class="eyebrow">Every rupee, accounted for</p><h1>Your home, in the making.</h1><p class="subtitle">A clear picture of your construction budget. All in one place.</p></div>
+      <div class="intro-actions"><a class="button" href="/expenses.html"><svg aria-hidden="true"><use href="#wallet"/></svg>Expenses</a><button class="button primary" id="edit-button"><svg aria-hidden="true"><use href="#edit"/></svg>Update amounts</button></div>
+    </div>
+    <div id="storage-notice" class="notice" role="alert" hidden></div>
+    <section class="project" aria-label="Current project">
+      <div class="project-icon"><svg aria-hidden="true"><use href="#home"/></svg></div>
+      <div><h2>My dream home</h2><p>Home construction &middot; Budget overview</p></div>
+      <span class="pill"><span class="dot"></span>In progress</span>
+    </section>
+    <div class="notice" id="demo-notice">Sample figures to help you get started. Select <strong>Update amounts</strong> to enter your own.</div>
+    <section class="cards" aria-label="Budget summary" aria-live="polite">
+      <article class="card"><div class="card-top"><h2>Total budget</h2><span class="card-icon"><svg aria-hidden="true"><use href="#wallet"/></svg></span></div><div class="amount" id="budget"></div><p>Your planned investment</p></article>
+      <article class="card paid"><div class="card-top"><h2>Amount paid</h2><span class="card-icon"><svg aria-hidden="true"><use href="#check"/></svg></span></div><div class="amount" id="paid"></div><p id="paid-description"></p></article>
+      <article class="card remaining"><div class="card-top"><h2 id="remaining-title">Remaining to pay</h2><span class="card-icon"><svg aria-hidden="true"><use href="#clock"/></svg></span></div><div class="amount" id="remaining"></div><p id="remaining-description">Budget available for your next steps</p></article>
+    </section>
+    <section class="progress-panel" aria-labelledby="progress-title">
+      <div class="progress-heading"><div><h2 class="section-title" id="progress-title">Your budget at a glance</h2><p>Small steps. A big dream coming together.</p></div><div class="percentage"><span id="percent"></span><small>of budget paid</small></div></div>
+      <div class="track" id="progress" role="progressbar" aria-label="Percentage of budget paid" aria-valuemin="0" aria-valuemax="100"><div class="fill" id="fill"></div></div>
+      <div class="legend"><span><i class="swatch"></i><span id="paid-legend"></span></span><span><i class="swatch light"></i><span id="remaining-legend"></span></span></div>
+      <div class="insight"><svg aria-hidden="true"><use href="#leaf"/></svg><span id="insight"></span></div>
+    </section>
+    <div class="bottom">
+      <section class="note"><svg aria-hidden="true"><use href="#home"/></svg><div><h2>Build your home. Keep your peace of mind.</h2><p>Keep your figures up to date to know exactly where you stand.</p></div></section>
+      <section class="quick-edit"><div><h2 class="section-title">Plans can change.</h2><p>Keep your budget in step with your build.</p></div><button class="button" id="adjust-button">Edit budget <span aria-hidden="true">&rarr;</span></button></section>
+    </div>
+    <footer class="footer"><span><svg aria-hidden="true"><use href="#lock"/></svg><span id="save-status">Loading your figures&hellip;</span></span><span>Made for the place you'll call home.</span></footer>
+  </main>
+  <dialog id="amount-dialog" aria-labelledby="dialog-title">
+    <form id="amount-form">
+      <h2 id="dialog-title">Your construction budget</h2>
+      <p>Enter your total planned budget and the total you've paid so far. All amounts are in Indian rupees (INR).</p>
+      <label for="budget-input">Total budget (INR)</label><input id="budget-input" name="budget" type="number" min="0" max="999999999999.99" step="0.01" required inputmode="decimal">
+      <label for="paid-input">Amount paid so far (INR)</label><input id="paid-input" name="paid" type="number" min="0" max="999999999999.99" step="0.01" required inputmode="decimal">
+      <div class="error" id="form-error" role="alert"></div>
+      <div class="dialog-actions"><button class="button" type="button" id="cancel-button">Cancel</button><button class="button primary" type="submit">Save amounts</button></div>
+    </form>
+  </dialog>
+  <dialog id="login-dialog" aria-labelledby="login-title">
+    <form id="login-form">
+      <h2 id="login-title">Log in</h2>
+      <p>Sign in to view and update your construction budget.</p>
+      <label for="login-username">Username</label><input id="login-username" name="username" type="text" autocomplete="username" required>
+      <label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      <div class="error" id="login-error" role="alert"></div>
+      <div class="dialog-actions"><button class="button primary" type="submit">Log in</button></div>
+    </form>
+  </dialog>
+  <script>
+
+    const maxPaise = 99999999999999;
+    const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 });
+    const percentage = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 1 });
+    const byId = id => document.getElementById(id);
+    let state = { budget: 400000000, paid: 150000000 };
+    let sample = true;
+    function validState(value) {
+      return value !== null && typeof value === "object" &&
+        ["budget", "paid"].every(key => Number.isSafeInteger(value[key]) && value[key] >= 0 && value[key] <= maxPaise);
+    }
+    function showError(message, error) {
+      if (error) console.error(message, error);
+      byId("storage-notice").textContent = message;
+      byId("storage-notice").hidden = false;
+    }
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      if (response.status === 401) {
+        showLogin();
+        throw new Error("Not logged in.");
+      }
+      return response;
+    }
+    function showLogin() {
+      byId("login-error").textContent = "";
+      byId("login-dialog").showModal();
+    }
+    async function loadBudget() {
+      try {
+        const response = await api("/api/budget");
+        if (response.status === 404) {
+          byId("save-status").textContent = "No figures saved yet \u00b7 Showing sample figures";
+          return;
+        }
+        if (!response.ok) throw new Error("Could not load budget: " + response.status);
+        const data = await response.json();
+        const loaded = { budget: data.budget_paise, paid: data.paid_paise };
+        if (!validState(loaded)) throw new Error("Server returned invalid budget data.");
+        state = loaded;
+        sample = false;
+        byId("save-status").textContent = "Saved to your account \u00b7 Synced across devices";
+      } catch (error) {
+        if (error.message === "Not logged in.") {
+          byId("save-status").textContent = "Log in to view your figures";
+        } else {
+          byId("save-status").textContent = "Could not load your figures";
+          showError("Your saved figures could not be loaded. Sample figures are shown instead. Update the amounts to continue.", error);
+        }
+      } finally {
+        render();
+      }
+    }
+    function render() {
+      const remaining = state.budget - state.paid;
+      const ratio = state.budget > 0 ? state.paid / state.budget * 100 : 0;
+      const percentText = state.budget > 0 ? percentage.format(ratio) + "%" : "\u2014";
+      byId("budget").textContent = currency.format(state.budget / 100);
+      byId("paid").textContent = currency.format(state.paid / 100);
+      byId("remaining").textContent = currency.format(Math.abs(remaining) / 100);
+      byId("remaining-title").textContent = remaining < 0 ? "Over budget" : "Remaining to pay";
+      byId("remaining-description").textContent = remaining < 0 ? "Amount paid above your planned budget" : "Budget available for your next steps";
+      byId("paid-description").textContent = state.budget > 0 ? percentText + " of your total budget" : "Set a budget to see your progress";
+      byId("percent").textContent = percentText;
+      const capped = Math.min(100, ratio);
+      byId("fill").style.width = capped + "%";
+      byId("fill").style.backgroundColor = remaining < 0 ? "#bc704e" : "#85a172";
+      byId("progress").setAttribute("aria-valuenow", String(capped));
+      byId("progress").setAttribute("aria-valuetext", state.budget > 0 ? percentText + " of budget paid" : "No budget set");
+      byId("paid-legend").textContent = "Paid " + currency.format(state.paid / 100);
+      byId("remaining-legend").textContent = (remaining < 0 ? "Over budget " : "Remaining ") + currency.format(Math.abs(remaining) / 100);
+      byId("insight").textContent = remaining < 0 ? "Your payments exceed your budget. Review your planned investment to stay on track." :
+        state.budget === 0 ? "Start by setting a budget for your home construction." :
+        remaining === 0 ? "Your planned budget is fully paid." :
+        currency.format(remaining / 100) + " of your planned budget is still available. Keep a little room for the unexpected.";
+      byId("demo-notice").hidden = !sample;
+    }
+    function editAmounts() {
+      byId("budget-input").value = String(state.budget / 100);
+      byId("paid-input").value = String(state.paid / 100);
+      byId("form-error").textContent = "";
+      byId("amount-dialog").showModal();
+    }
+    byId("edit-button").addEventListener("click", editAmounts);
+    byId("adjust-button").addEventListener("click", editAmounts);
+    byId("cancel-button").addEventListener("click", () => byId("amount-dialog").close());
+    byId("amount-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const next = {
+        budget: Math.round(byId("budget-input").valueAsNumber * 100),
+        paid: Math.round(byId("paid-input").valueAsNumber * 100)
+      };
+      if (!validState(next)) {
+        byId("form-error").textContent = "Enter valid, non-negative amounts with up to two decimal places.";
+        return;
+      }
+      saveBudget(next);
+    });
+    async function saveBudget(next) {
+      const submit = byId("amount-form").querySelector("button[type=submit]");
+      submit.disabled = true;
+      try {
+        const response = await api("/api/budget", {
+          method: "PUT",
+          body: JSON.stringify({ budget_paise: next.budget, paid_paise: next.paid })
+        });
+        if (!response.ok) throw new Error("Save failed: " + response.status);
+        state = next;
+        sample = false;
+        byId("storage-notice").hidden = true;
+        byId("save-status").textContent = "Saved to your account \u00b7 Synced across devices";
+        render();
+        byId("amount-dialog").close();
+      } catch (error) {
+        if (error.message !== "Not logged in.") {
+          byId("form-error").textContent = "Could not save your amounts. Check your connection and try again.";
+          console.error(error);
+        }
+      } finally {
+        submit.disabled = false;
+      }
+    }
+    byId("login-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const submit = byId("login-form").querySelector("button[type=submit]");
+      submit.disabled = true;
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: byId("login-username").value, password: byId("login-password").value })
+        });
+        if (!response.ok) {
+          byId("login-error").textContent = "Incorrect username or password.";
+          return;
+        }
+        byId("login-password").value = "";
+        byId("login-dialog").close();
+        await loadBudget();
+      } catch (error) {
+        byId("login-error").textContent = "Could not reach the server. Try again.";
+        console.error(error);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+    loadBudget();
+  </script>
+</body>
+</html>
