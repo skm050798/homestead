@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#174d40">
+  <title>Payment Schedule | Homestead</title>
+  <style>
+    :root{font-family:Inter,"Segoe UI",sans-serif;color:#203e35;background:#f7f8f4;font-synthesis:none;--green:#174d40;--muted:#758079;--border:#e4e9e1}
+    *{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #bc892e;outline-offset:3px}.shell{max-width:1280px;margin:auto;padding:0 56px}
+    header{border-bottom:1px solid var(--border);background:#fff}header .shell{height:88px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:650;letter-spacing:-.8px;text-decoration:none}.brand-icon{background:var(--green);color:white;display:grid;place-items:center;width:40px;height:40px;border-radius:12px}.brand-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.header-tag{font-size:12px;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase}
+    main.shell{padding-top:45px;padding-bottom:30px}.breadcrumb{font-size:12px;display:flex;gap:10px;align-items:center;color:var(--muted);margin-bottom:26px}.eyebrow{font-size:11px;font-weight:650;letter-spacing:2px;color:#7a866f;text-transform:uppercase;margin:0 0 12px}h1{font-size:38px;letter-spacing:-1.5px;line-height:1.15;font-weight:600;margin:0 0 12px}.subtitle{font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 32px}
+    .button{border:1px solid var(--border);border-radius:8px;padding:12px 17px;background:white;color:var(--green);font-size:13px;font-weight:600;white-space:nowrap}.button:hover{background:#edf1e9}.button.primary{background:var(--green);color:#fff;border-color:var(--green)}.button.primary:hover{background:#23624f}.button.small{padding:7px 11px;font-size:12px}.button:disabled{opacity:.6;cursor:default}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}.schedule-intro{padding:20px}.schedule-intro h2{font-size:15px;margin:0 0 6px}.schedule-intro p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}.schedule-upload{display:flex;align-items:flex-end;gap:12px;margin:15px 0 8px}.schedule-upload div{flex:1;min-width:0}.schedule-upload label{margin:0 0 6px}
+    .table-wrap{overflow-x:auto;border-top:1px solid var(--border)}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#7a866f;white-space:nowrap}th,td{padding:14px 16px;border-bottom:1px solid var(--border)}tbody tr:last-child td{border-bottom:0}.amount-cell{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}.schedule-status{white-space:nowrap}.schedule-status[data-paid="true"]{font-weight:600;color:var(--green)}.schedule-actions{width:1%;white-space:nowrap;text-align:right}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    dialog{border:1px solid var(--border);border-radius:16px;padding:30px;width:min(440px,calc(100% - 32px));color:#203e35;box-shadow:0 24px 80px #173a3429}dialog::backdrop{background:#173a3466}dialog h2{font-size:23px;margin:0 0 10px}dialog p{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 22px}label{display:block;font-size:13px;font-weight:600;margin:17px 0 8px}input{width:100%;border:1px solid #cdd7c9;border-radius:7px;padding:12px;color:#203e35;background:white}.dialog-actions{display:flex;justify-content:flex-end;margin-top:24px}.error:not(:empty){color:#ac382c;font-size:13px;margin-top:10px;line-height:1.5}
+    @media(max-width:800px){.shell{padding-left:24px;padding-right:24px}.header-tag{display:none}h1{font-size:32px}}
+    @media(max-width:580px){header .shell{height:72px}main.shell{padding-top:26px}.shell{padding-left:20px;padding-right:20px}.schedule-upload{align-items:stretch;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header><div class="shell">
+    <a class="brand" href="/"><span class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></svg></span>homestead<span style="color:#8aa273">.</span></a>
+    <span class="header-tag">A little closer to home</span>
+  </div></header>
+  <main class="shell">
+    <nav class="breadcrumb" aria-label="Page links"><a href="/">My home</a><span aria-hidden="true">/</span><a href="/expenses.html">Expenses</a></nav>
+    <p class="eyebrow">Plan your payments</p>
+    <h1 id="schedule-title">Payment schedule</h1>
+    <p class="subtitle">Track planned payments by milestone. Changes here don't affect your expenses or dashboard totals.</p>
+    <section class="panel" aria-labelledby="import-title">
+      <div class="schedule-intro">
+        <h2 id="import-title">Import a payment schedule</h2>
+        <p id="schedule-help">Upload a PDF with selectable text and columns for Amount and either Milestone or Description. Percentages are calculated from the imported amounts, and all payments start as Pending.</p>
+        <form class="schedule-upload" id="schedule-form">
+          <div><label for="schedule-pdf">Payment schedule PDF</label><input id="schedule-pdf" type="file" accept=".pdf,application/pdf" aria-describedby="schedule-help" required></div>
+          <button class="button primary" type="submit" id="schedule-upload" disabled>Import PDF</button>
+        </form>
+        <p id="schedule-message" role="status">Loading your schedule&hellip;</p>
+        <div class="error" id="schedule-error" role="alert"></div>
+      </div>
+      <div class="table-wrap" id="schedule-table" hidden>
+        <table aria-labelledby="schedule-title">
+          <thead><tr><th scope="col">Milestone</th><th scope="col">%</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+          <tbody id="schedule-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <dialog id="login-dialog" aria-labelledby="login-title">
+    <form id="login-form">
+      <h2 id="login-title">Log in</h2>
+      <p>Sign in to view and update your payment schedule.</p>
+      <label for="login-username">Username</label><input id="login-username" name="username" type="text" autocomplete="username" required>
+      <label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      <div class="error" id="login-error" role="alert"></div>
+      <div class="dialog-actions"><button class="button primary" type="submit">Log in</button></div>
+    </form>
+  </dialog>
+  <script>
+    const byId = id => document.getElementById(id);
+    const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 });
+    const schedulePath = "/api/payment-schedule";
+    const scheduleUpload = byId("schedule-upload");
+    const scheduleMessage = byId("schedule-message");
+    const scheduleError = byId("schedule-error");
+    const loginDialog = byId("login-dialog");
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      if (response.status === 401) {
+        if (!loginDialog.open) {
+          byId("login-error").textContent = "";
+          loginDialog.showModal();
+        }
+        throw new Error("Log in to view your schedule.");
+      }
+      return response;
+    }
+
+    function cell(text, className) {
+      const td = document.createElement("td");
+      td.textContent = text;
+      if (className) td.className = className;
+      return td;
+    }
+
+    function renderSchedule(payments) {
+      const rows = byId("schedule-rows");
+      rows.replaceChildren();
+      byId("schedule-table").hidden = payments.length === 0;
+      scheduleUpload.textContent = payments.length ? "Replace schedule" : "Import PDF";
+      for (const payment of payments) {
+        const row = document.createElement("tr");
+        const status = cell(payment.status, "schedule-status");
+        const actions = document.createElement("td");
+        actions.className = "schedule-actions";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "button small";
+        button.addEventListener("click", async () => {
+          button.disabled = true;
+          scheduleError.textContent = "";
+          scheduleMessage.textContent = "";
+          try {
+            const response = await api(schedulePath + "/" + payment.id, {
+              method: "PATCH",
+              body: JSON.stringify({ status: payment.status === "Paid" ? "Pending" : "Paid" })
+            });
+            if (response.status === 404) throw new Error("The schedule has changed. Refresh the page to see it.");
+            if (!response.ok) throw new Error("Could not save this payment status. Try again.");
+            payment.status = (await response.json()).status;
+            updateStatus();
+            scheduleMessage.textContent = payment.milestone + " marked " + payment.status.toLowerCase() + ".";
+          } catch (error) {
+            scheduleError.textContent = error.message || "Could not save this payment status.";
+          } finally {
+            button.disabled = false;
+          }
+        });
+        function updateStatus() {
+          status.textContent = payment.status;
+          status.dataset.paid = String(payment.status === "Paid");
+          button.textContent = payment.status === "Paid" ? "Mark pending" : "Mark paid";
+          button.setAttribute("aria-label", button.textContent + ": " + payment.milestone);
+        }
+        updateStatus();
+        actions.append(button);
+        row.append(cell(payment.milestone), cell(payment.percentage_bps / 100 + "%"),
+          cell(currency.format(payment.amount_paise / 100), "amount-cell"), status, actions);
+        rows.append(row);
+      }
+    }
+
+    async function loadSchedule() {
+      scheduleUpload.disabled = true;
+      scheduleError.textContent = "";
+      try {
+        const response = await api(schedulePath);
+        if (!response.ok) throw new Error("Could not load the payment schedule. Try refreshing the page.");
+        const payments = await response.json();
+        renderSchedule(payments);
+        scheduleMessage.textContent = payments.length ? "" : "No payment schedule yet.";
+        scheduleUpload.disabled = false;
+      } catch (error) {
+        scheduleMessage.textContent = "";
+        scheduleError.textContent = error.message;
+      }
+    }
+
+    byId("schedule-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const input = byId("schedule-pdf");
+      const pdf = input.files[0];
+      if (!pdf || scheduleUpload.disabled) return;
+      scheduleError.textContent = "";
+      if (pdf.size > 5 * 1024 * 1024) {
+        scheduleError.textContent = "Upload a PDF no larger than 5 MB.";
+        return;
+      }
+      scheduleUpload.disabled = true;
+      scheduleMessage.textContent = "Reading your PDF...";
+      const options = { method: "POST", headers: { "Content-Type": "application/pdf" }, body: pdf };
+      try {
+        let response = await api(schedulePath, options);
+        if (response.status === 409) {
+          if (!confirm("Replace the current schedule? All payments in the new schedule will start as Pending.")) {
+            scheduleMessage.textContent = "The current schedule was kept.";
+            return;
+          }
+          response = await api(schedulePath + "?replace=true", options);
+        }
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(typeof error.detail === "string" ? error.detail : "Could not import the PDF.");
+        }
+        const payments = await response.json();
+        renderSchedule(payments);
+        input.value = "";
+        scheduleMessage.textContent = "Imported " + payments.length + (payments.length === 1 ? " payment." : " payments.");
+      } catch (error) {
+        scheduleMessage.textContent = "";
+        scheduleError.textContent = error.message || "Could not import the PDF.";
+      } finally {
+        scheduleUpload.disabled = false;
+      }
+    });
+
+    byId("login-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const submit = byId("login-form").querySelector("button[type=submit]");
+      submit.disabled = true;
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: byId("login-username").value, password: byId("login-password").value })
+        });
+        if (!response.ok) {
+          byId("login-error").textContent = "Incorrect username or password.";
+          return;
+        }
+        byId("login-password").value = "";
+        loginDialog.close();
+        await loadSchedule();
+      } catch (error) {
+        byId("login-error").textContent = "Could not reach the server. Try again.";
+        console.error(error);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+    loadSchedule();
+  </script>
+</body>
+</html>
