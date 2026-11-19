@@ -65,5 +65,16 @@ class Expense(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
 
+class ScheduledPayment(Base):
+    __tablename__ = "scheduled_payment"
+    __table_args__ = {"sqlite_autoincrement": True}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    milestone: Mapped[str] = mapped_column(String(200))
+    percentage_bps: Mapped[int]
+    amount_paise: Mapped[int] = mapped_column(BigInteger)
+    status: Mapped[str] = mapped_column(String(7))
+
+
 def init_db() -> None:
     Base.metadata.create_all(engine)

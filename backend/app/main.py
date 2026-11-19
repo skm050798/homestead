@@ -5,19 +5,23 @@ from typing import Annotated
 
 from contextlib import asynccontextmanager
 
-from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, StringConstraints
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from . import auth
-from .db import Budget, BudgetHistory, Expense, SessionLocal, init_db, utc_now
+from .db import Budget, BudgetHistory, Expense, ScheduledPayment, SessionLocal, init_db, utc_now
+from .payment_schedule import (
+    MAX_PAISE, MAX_PDF_BYTES, PaymentRow, PaymentStatusIn, ScheduleImportError, read_payment_schedule,
+)
 
 
-MAX_PAISE = 99999999999999
 PAGE_PATH = Path(__file__).resolve().parents[2] / "index.html"
 EXPENSES_PAGE_PATH = Path(__file__).resolve().parents[2] / "expenses.html"
+PAYMENT_SCHEDULE_PAGE_PATH = Path(__file__).resolve().parents[2] / "payment-schedule.html"
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() == "true"
 
 
@@ -72,6 +76,10 @@ class ExpenseOut(ExpenseIn):
     id: int
 
 
+class ScheduledPaymentOut(PaymentRow):
+    id: int
+
+
 def adjust_paid(db: Session, delta_paise: int, now: datetime) -> None:
     """Add or remove an expense amount from the budget's amount paid."""
     budget = db.get(Budget, 1)
@@ -91,6 +99,11 @@ def home_page() -> FileResponse:
 @app.get("/expenses.html")
 def expenses_page() -> FileResponse:
     return FileResponse(EXPENSES_PAGE_PATH)
+
+
+@app.get("/payment-schedule.html")
+def payment_schedule_page() -> FileResponse:
+    return FileResponse(PAYMENT_SCHEDULE_PAGE_PATH)
 
 
 @app.post("/api/login")
@@ -195,3 +208,54 @@ def delete_expense(expense_id: int, db: Session = Depends(get_db)) -> dict:
     db.delete(expense)
     db.commit()
     return {"ok": True}
+
+
+@app.get("/api/payment-schedule", response_model=list[ScheduledPaymentOut], dependencies=[Depends(require_login)])
+def list_scheduled_payments(db: Session = Depends(get_db)) -> list[ScheduledPayment]:
+    return list(db.scalars(select(ScheduledPayment).order_by(ScheduledPayment.id)))
+
+
+def save_payment_schedule(pdf: bytes, replace: bool) -> list[ScheduledPaymentOut]:
+    try:
+        rows = read_payment_schedule(pdf)
+    except ScheduleImportError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    with SessionLocal.begin() as db:
+        if replace:
+            db.execute(delete(ScheduledPayment))
+        elif db.scalar(select(ScheduledPayment.id).limit(1)) is not None:
+            raise HTTPException(status_code=409, detail="A payment schedule already exists.")
+        payments = [ScheduledPayment(**row.model_dump()) for row in rows]
+        db.add_all(payments)
+        db.flush()
+        return [ScheduledPaymentOut.model_validate(payment, from_attributes=True) for payment in payments]
+
+
+@app.post(
+    "/api/payment-schedule", response_model=list[ScheduledPaymentOut],
+    status_code=201, dependencies=[Depends(require_login)],
+)
+async def import_payment_schedule(request: Request, replace: bool = False) -> list[ScheduledPaymentOut]:
+    if request.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/pdf":
+        raise HTTPException(status_code=415, detail="Upload a PDF file.")
+    pdf = bytearray()
+    async for chunk in request.stream():
+        if len(pdf) + len(chunk) > MAX_PDF_BYTES:
+            raise HTTPException(status_code=413, detail="Upload a PDF no larger than 5 MB.")
+        pdf.extend(chunk)
+    return await run_in_threadpool(save_payment_schedule, bytes(pdf), replace)
+
+
+@app.patch(
+    "/api/payment-schedule/{payment_id}", response_model=ScheduledPaymentOut,
+    dependencies=[Depends(require_login)],
+)
+def update_scheduled_payment(
+    payment_id: int, body: PaymentStatusIn, db: Session = Depends(get_db),
+) -> ScheduledPayment:
+    payment = db.get(ScheduledPayment, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Scheduled payment not found. Reload the schedule.")
+    payment.status = body.status
+    db.commit()
+    return payment
