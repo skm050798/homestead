@@ -13,10 +13,12 @@
     .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-bottom:24px}.card{padding:25px;border:1px solid var(--border);border-radius:12px;background:#fff}.card h2{font-size:13px;font-weight:500;margin:0;color:#6b786f}.amount{font-size:clamp(25px,2.7vw,36px);font-weight:600;letter-spacing:-1.2px;margin:16px 0 4px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.card p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.card.total{background:var(--green);border-color:var(--green);color:white}.card.total h2,.card.total p{color:#c0d3c7}
     .panel{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#7a866f;font-weight:600;padding:14px 16px;border-bottom:1px solid var(--border);white-space:nowrap}td{padding:14px 16px;border-bottom:1px solid #f0f2eb;vertical-align:top}tr:last-child td{border-bottom:0}.amount-cell{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}.notes{color:var(--muted);min-width:160px}.actions{white-space:nowrap;text-align:right}.actions .button+.button{margin-left:6px}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.empty{padding:34px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
     .notice{font-size:13px;padding:13px 16px;border:1px solid #e6ca8b;background:#fff6e3;border-radius:8px;color:#775215;margin-bottom:20px;line-height:1.5}.notice[hidden],.empty[hidden]{display:none}
+    .category-panel{padding:24px;margin-bottom:24px}.category-panel h2{font-size:15px;font-weight:600;margin:0 0 6px}.category-panel>p{font-size:12px;color:var(--muted);margin:0 0 18px}.category-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.category-item{width:100%;text-align:left;padding:14px;border:1px solid var(--border);border-radius:8px;background:#fff;color:inherit}    .category-item:hover,.category-item[aria-pressed="true"]{border-color:#85a172;background:#f5f7f1}.category-item-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.category-name{font-size:13px;font-weight:600;overflow-wrap:anywhere}.category-total{font-size:13px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}.category-count{font-size:11px;color:var(--muted);margin-top:5px}.category-track{height:5px;background:#eef1e8;border-radius:5px;margin-top:12px;overflow:hidden}.category-fill{height:100%;background:#85a172;border-radius:5px}.list-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--border)}.list-heading h2{font-size:15px;font-weight:600;margin:0}.list-heading .button[hidden]{display:none}
     .footer{display:flex;justify-content:space-between;gap:15px;font-size:11px;color:#899184;margin:28px 0 8px;line-height:1.6}.footer span:first-child{display:flex;align-items:center;gap:6px}.footer svg{width:13px;height:13px}
     dialog{border:1px solid var(--border);border-radius:16px;padding:30px;width:min(440px,calc(100% - 32px));color:#203e35;box-shadow:0 24px 80px #173a3429}dialog::backdrop{background:#173a3466}dialog h2{font-size:23px;margin:0 0 10px;letter-spacing:-.5px}dialog p{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 22px}label{display:block;font-size:13px;font-weight:600;margin:17px 0 8px}input,textarea{width:100%;border:1px solid #cdd7c9;border-radius:7px;padding:12px;color:#203e35;background:white}textarea{min-height:72px;resize:vertical}input:focus,textarea:focus{outline:2px solid #85a172;outline-offset:2px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.error{color:#ac382c;font-size:12px;margin-top:10px;line-height:1.5}
     @media(max-width:800px){.shell{padding-left:24px;padding-right:24px}.header-tag{display:none}.intro{align-items:flex-start}h1{font-size:32px}}
     @media(max-width:580px){header .shell{height:72px}.shell{padding-left:20px;padding-right:20px}.brand{font-size:21px}.intro{flex-direction:column;gap:20px;margin-bottom:24px}.intro>.button{width:100%}h1{font-size:32px}.cards{gap:12px}.card{padding:18px}.amount{font-size:26px}.footer{flex-direction:column;gap:4px}}
+    @media(max-width:580px){.category-panel{padding:18px}.category-list{grid-template-columns:1fr}.list-heading{padding:14px}}
   </style>
 </head>
 <body>
@@ -42,7 +44,13 @@
       <article class="card total"><h2>Total spent</h2><div class="amount" id="total"></div><p>Sum of all recorded expenses</p></article>
       <article class="card"><h2>Expenses recorded</h2><div class="amount" id="count"></div><p>Newest first in the list below</p></article>
     </section>
+    <section class="panel category-panel" id="category-panel" aria-labelledby="category-title" hidden>
+      <h2 id="category-title">Spending by category</h2>
+      <p>Select a category to see its expenses.</p>
+      <div class="category-list" id="category-list"></div>
+    </section>
     <section class="panel" aria-label="Expense list">
+      <div class="list-heading"><h2 id="list-title">All expenses</h2><button class="button small" id="clear-filter" type="button" hidden>Show all</button></div>
       <div class="table-wrap">
         <table>
           <thead><tr><th scope="col">Date</th><th scope="col">Category</th><th scope="col">Vendor</th><th scope="col">Amount</th><th scope="col">Notes</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
@@ -83,6 +91,7 @@
     const byId = id => document.getElementById(id);
     let expenses = [];
     let editingId = null;
+    let selectedCategory = null;
 
     function showError(message, error) {
       if (error) console.error(message, error);
@@ -148,10 +157,72 @@
       const total = expenses.reduce((sum, expense) => sum + expense.amount_paise, 0);
       byId("total").textContent = currency.format(total / 100);
       byId("count").textContent = String(expenses.length);
-      byId("empty-state").hidden = expenses.length > 0;
+      const categories = new Map();
+      for (const expense of expenses) {
+        const category = categories.get(expense.category) || { total: 0, count: 0 };
+        category.total += expense.amount_paise;
+        category.count += 1;
+        categories.set(expense.category, category);
+      }
+      if (selectedCategory !== null && !categories.has(selectedCategory)) selectedCategory = null;
+      const categoryEntries = Array.from(categories.entries()).sort((a, b) =>
+        b[1].total - a[1].total || a[0].localeCompare(b[0])
+      );
+      const largestCategory = categoryEntries.length ? categoryEntries[0][1].total : 0;
+      byId("category-panel").hidden = categoryEntries.length === 0;
+      const categoryList = byId("category-list");
+      categoryList.replaceChildren();
+      for (const [name, category] of categoryEntries) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "category-item";
+        button.setAttribute("aria-pressed", String(selectedCategory === name));
+        button.addEventListener("click", () => {
+          selectedCategory = selectedCategory === name ? null : name;
+          render();
+        });
+        const top = document.createElement("span");
+        top.className = "category-item-top";
+        const label = document.createElement("span");
+        label.className = "category-name";
+        label.textContent = name;
+        const amount = document.createElement("span");
+        amount.className = "category-total";
+        amount.textContent = currency.format(category.total / 100);
+        top.append(label, amount);
+        const countLabel = document.createElement("span");
+        countLabel.className = "category-count";
+        countLabel.textContent = category.count + (category.count === 1 ? " expense" : " expenses");
+        const track = document.createElement("span");
+        track.className = "category-track";
+        track.setAttribute("aria-hidden", "true");
+        const fill = document.createElement("span");
+        fill.className = "category-fill";
+        fill.style.width = (category.total / largestCategory * 100) + "%";
+        track.append(fill);
+        button.append(top, countLabel, track);
+        categoryList.append(button);
+      }
+      byId("list-title").textContent = selectedCategory === null ? "All expenses" : selectedCategory + " expenses";
+      byId("clear-filter").hidden = selectedCategory === null;
+      const visibleExpenses = selectedCategory === null
+        ? expenses
+        : expenses.filter(expense => expense.category === selectedCategory);
+      const emptyState = byId("empty-state");
+      emptyState.hidden = visibleExpenses.length > 0;
+      if (visibleExpenses.length === 0) {
+        if (expenses.length) {
+          emptyState.textContent = "No expenses in this category.";
+        } else {
+          emptyState.replaceChildren("No expenses yet. Select ");
+          const addLabel = document.createElement("strong");
+          addLabel.textContent = "Add expense";
+          emptyState.append(addLabel, " to record your first payment.");
+        }
+      }
       const rows = byId("rows");
       rows.replaceChildren();
-      for (const expense of expenses) {
+      for (const expense of visibleExpenses) {
         const row = document.createElement("tr");
         const actions = document.createElement("td");
         actions.className = "actions";
@@ -183,6 +254,10 @@
     }
     byId("add-button").addEventListener("click", () => openDialog(null));
     byId("cancel-button").addEventListener("click", () => byId("expense-dialog").close());
+    byId("clear-filter").addEventListener("click", () => {
+      selectedCategory = null;
+      render();
+    });
     byId("expense-form").addEventListener("submit", event => {
       event.preventDefault();
       const amountPaise = Math.round(byId("amount-input").valueAsNumber * 100);
